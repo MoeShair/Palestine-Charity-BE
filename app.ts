@@ -1,37 +1,35 @@
 import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
+import postsRoutes from './routes/posts';
 
 const app = express();
-const port = 3002;
+const port = 2000;
 
-// MongoDB connection URI
-const mongoURI = 'mongodb+srv://iman:<password>@cluster0.zonoxxy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+// Import routes
+app.use(express.json()); // Use built-in JSON parsing middleware
+app.use('/posts', postsRoutes);
+
+// MongoDB connection URI 
+const mongoURI = 'mongodb+srv://imansalameh:iman2002@cluster1.xttal40.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1';
 
 // Connect to MongoDB
-mongoose.connect(mongoURI, {
-    useNewUrlParser: true, // Use the new parser
-    useUnifiedTopology: true
-})
-.then(() => {
+mongoose.connect(mongoURI)
+  .then(() => {
     console.log("Connected to MongoDB");
-})
-.catch((error) => {
+    
+    // Define additional routes
+    app.get('/', (req: Request, res: Response) => {
+      res.send("we are on home");
+    });
+
+    // Start the Express server after MongoDB connection is established
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  })
+  .catch((error) => {
     console.error("Error connecting to MongoDB:", error);
     process.exit(1); // Exit the process if there's an error
-});
-
-// Define routes
-app.get('/', (req: Request, res: Response) => {
-    res.send("we are on home");
-});
-
-app.get('/posts', (req: Request, res: Response) => {
-    res.send("we are on posts");
-});
-
-// Start the Express server
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
+  });
 
 console.log("hi");
